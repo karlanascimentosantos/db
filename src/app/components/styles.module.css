@@ -42,11 +42,11 @@
   left: 1350px;
   top: 65px;
   cursor: pointer;
+  
+  
 }
 .escolherH:hover {
-
- 
-  color:#e9ca4f
+  color:#e9ca4f;
 }
 
 .dataLabel{
@@ -241,20 +241,30 @@ html, body {
 }
 
 .concluido {
-  color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   position: fixed;
   margin-left: 1500px;
   display: flex;
   margin-top: 0px;
   cursor: pointer;
+  
 }
 
 .list {
   position: relative;
   font-family: 'Times New Roman', Times, serif;
-  margin-top: 30px;
-  margin-left: 150px;
+  margin-top: 45px;
+  margin-left: 100px;
+  background-color: #f2efeb;
+  border-radius: 36px;
+  padding: 15px;
+  font-size: 18px;
+  color: black;
+  font-family: 'Times New Roman', Times, serif; 
+  font-weight: bold;
+
 }
+
 
 
 

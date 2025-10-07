@@ -4,6 +4,7 @@ import { useState} from 'react'
 import AutenticarForm from '../components/AutenticarForm'
 import style from "./page.module.css"
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
    
     
 export default function Home() {
@@ -18,8 +19,17 @@ export default function Home() {
             body: JSON.stringify(consumidor)
         })
        if(response.ok) {
-        alert("Cadastro realizado com sucesso!");
-        router.push("/novoLogin");
+           await Swal.fire ({
+                   title: "Cadastrado",
+                   text: "Cadastro realizado com sucesso",
+                   confirmButtonText: "OK",
+                   icon: "success",
+                   background: "#b59b35",
+                   color: "black",
+                   iconColor: "rgba(79, 100, 6, 1)",
+                   confirmButtonColor: "black",
+                      })
+        router.push("/novoLogin")
        } else {
         alert("Erro ao cadastrar cliente!");
        }

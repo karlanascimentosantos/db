@@ -228,3 +228,7 @@ html, body {
   z-index: 1000;         /* garante que fique acima de outros elementos */
 }
 
+
+.alert {
+  color: red;
+}

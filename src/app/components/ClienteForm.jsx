@@ -51,7 +51,7 @@ export default function ClienteForm({ onAddAgendamento }) {
         {horarios.length === 0 && <li className={style.dataS}> Selecione uma data</li>}
         {horarios.map(h => (
           <li className={style.escolherH} key={h} onClick={() => setHora(h)}
-              style={{ cursor: 'pointer', fontWeight: h===hora?'bold':'normal' }}>{h}</li>
+              style={{ cursor: 'pointer !important', fontWeight: h===hora?'bold':'normal', color: h===hora?'#e9ca4f': 'inherit' }}>{h}</li>
         ))}
       </ul>
 

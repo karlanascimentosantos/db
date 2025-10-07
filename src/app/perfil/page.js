@@ -3,7 +3,8 @@
 import { useAuth } from '../context/AuthContext'
 import style from "./page.module.css"
 import { useEffect, useState } from 'react'
-import { Calendar, Trash2, MessageCircleQuestionMark, MapPin, CircleUserRound} from "lucide-react"
+import { Calendar, Trash2, MessageCircleQuestionMark, MapPin, CircleUserRound, Radius} from "lucide-react"
+import Swal from 'sweetalert2'
 
 
 export default function Perfil() {
@@ -18,8 +19,6 @@ export default function Perfil() {
       try {
          const response = await fetch(`/api/agendamento?consumidorId=${usuarioLogado.id}`)
          const data = await response.json();
-         setAgendamentos(data);
-
          setAgendamentos(data);
 
         const agora = new Date();
@@ -40,7 +39,12 @@ export default function Perfil() {
   async function handleDelete(id) {
   if (!id) return alert('ID inválido');
 
-  const confirmDelete = window.confirm("Deseja realmente cancelar este agendamento?");
+  const confirmDelete = (Swal.fire ({
+    title: 'Cancelar',
+    text: 'Deseja realmente cancelar este agendamento?',
+    confirmButtonText: 'Sim',
+    icon: 'warning',
+  }));
   if (!confirmDelete) return;
 
   try {
@@ -53,7 +57,7 @@ export default function Perfil() {
     const data = await response.json();
     console.log(data); 
     if (response.ok) {
-      alert(data.message);
+     <div className={style.alert}>alert(data.message);</div> 
       setAgendamentos(prev => prev.filter(a => a.agendamentoid !== id));
 
       const agora = new Date();
@@ -73,7 +77,7 @@ export default function Perfil() {
 
 return (
     <div> 
-     
+
     <h1 className={style.nome}> <CircleUserRound size={35} color="#caaa00"/> {usuarioLogado.nome}</h1>
 
   <a href="agendamento" className={style.buttonAgendar}>Agendar Horário</a>
@@ -90,7 +94,7 @@ return (
     <h2 className={style.avisos}> Estamos abertos até o meio dia </h2>
    </div>
 
-   <div className={style.quadroB}></div>]
+   <div className={style.quadroB}></div>
    <div className={style.quadroC}></div>
    
 

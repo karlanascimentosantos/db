@@ -3,6 +3,8 @@ import { useState } from 'react'
 import ClienteForm from '../components/ClienteForm'
 import { useAuth } from '../context/AuthContext'
 import style from './page.module.css'
+import Swal from 'sweetalert2'
+
 
 export default function Page() {
   const { usuarioLogado } = useAuth()
@@ -27,10 +29,36 @@ export default function Page() {
 
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Erro ao salvar agendamento')
-      alert(`Agendamento criado com sucesso para o dia ${datahora}`)
+
+      const confirmAgendamento = await Swal.fire ({
+        title: "Agendado",
+        text: `Agendamento realizado com sucesso para o dia: ${datahora}`,
+        confirmButtonText: "OK",
+        icon: "success",
+        background: "#b59b35",
+        color: "black",
+        iconColor: "rgba(79, 100, 6, 1)",
+        confirmButtonColor: "black",
+         
+        
+      });
+     if (!confirmAgendamento.isConfirmed) return;
+  
     } catch (err) {
       console.error(err)
-      alert('Erro ao salvar agendamento')
+      
+     Swal.fire ({
+       title: 'erro',
+       text: "Não foi possível realizar agendamento",
+       confirmButtonColor: "OK",
+       background: "#b59b35",
+        color: "black",
+        iconColor: "rgba(79, 100, 6, 1)",
+        confirmButtonColor: "black",
+      icon: "error"
+       
+
+     })
     }
   }
 

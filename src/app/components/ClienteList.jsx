@@ -21,7 +21,7 @@ export default function ClienteList({ clientes, onDeleteConsumidor}) {
         <li className={style.list} key={agendamento.agendamentoid}>  
 
           <span> 
-            {agendamento.nomeservico} - {new Date (agendamento.datahora).toLocaleString('pt-BR',{
+            {agendamento.servicoNome} - {new Date (agendamento.datahora).toLocaleString('pt-BR',{
               dateStyle: 'short',
               timeStyle: 'short' 
              

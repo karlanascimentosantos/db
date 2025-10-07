@@ -28,7 +28,9 @@ export default function Historico() {
   return (
     <div>
       <h1 className={style.h1}>Seu histórico</h1>
-      <ClienteList clientes={clientes} />
+      <div>
+        <ClienteList clientes={clientes} />
+      </div>
       <div className={style.barra}></div>
     </div>
   )

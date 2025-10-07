@@ -9,7 +9,7 @@
 }
 
 .h2{
-    color: white;
+    color: rgb(255, 255, 255);
     position: relative;
     top: 200px;
     left: 150px;
@@ -21,5 +21,10 @@ html, body {
   padding: 0;
   scroll-behavior: smooth;
   height: 100%; 
+}
+
+
+.fontText {
+  font-family: 'Times New Roman', Times, serif;
 }
 
