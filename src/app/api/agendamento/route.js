@@ -9,7 +9,7 @@ export async function GET(request) {
 
     const client = await pool.connect()
     const result = await client.query(
-      `SELECT a.agendamentoid, a.datahora, a.consumidor_id, a.id_servico, s.nome  AS servico
+      `SELECT a.agendamentoid, a.datahora, a.consumidor_id, a.id_servico, a.concluido, a.avaliacao, s.nome  AS servico
        FROM agendamento a
        JOIN servico s ON a.id_servico = s.id
        WHERE a.consumidor_id = $1
@@ -70,4 +70,65 @@ export async function DELETE(request) {
   }
 }
 
- 
+export async function PUT(request) {
+  try {
+    const { agendamentoid, concluido, avaliacao } = await request.json();
+  
+    if (!agendamentoid) {
+      return NextResponse.json(
+        { error: "ID do agendamento é obrigatório." },
+        { status: 400 }
+      );
+    }
+
+    const campos = [];
+    const valores = [];
+    let index = 1;
+
+    if (avaliacao !== undefined) {
+      campos.push(`avaliacao = $${index++}`);
+      valores.push(avaliacao);
+    }
+
+    if (concluido !== undefined) {
+      campos.push(`concluido = $${index++}`);
+      valores.push(concluido);
+    }
+
+    if (campos.length === 0) {
+      return NextResponse.json(
+        { error: "Nenhum campo válido enviado." },
+        { status: 400 }
+      );
+    }
+
+    valores.push(agendamentoid);
+
+    const client = await pool.connect();
+    const result = await client.query(
+      `
+        UPDATE agendamento
+        SET ${campos.join(", ")}
+        WHERE agendamentoid = $${index}
+        RETURNING *;
+      `,
+      valores
+    );
+    client.release();
+
+    if (result.rowCount === 0) {
+      return NextResponse.json(
+        { error: "Agendamento não encontrado." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(result.rows[0]);
+  } catch (error) {
+    console.error("Erro ao atualizar agendamento:", error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar agendamento." },
+      { status: 500 }
+    );
+  }
+}

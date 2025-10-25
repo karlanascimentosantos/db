@@ -253,18 +253,101 @@ html, body {
 .list {
   position: relative;
   font-family: 'Times New Roman', Times, serif;
-  margin-top: 45px;
-  margin-left: 100px;
+  margin-top: 15px;        /* menos espaço entre itens */
+  margin-left: 0;          /* alinha à esquerda */
   background-color: #f2efeb;
-  border-radius: 36px;
-  padding: 15px;
-  font-size: 18px;
+  border-radius: 16px;     /* bordas mais sutis */
+  padding: 10px 15px;      /* mantém espaçamento interno confortável */
+  font-size: 15px;         /* texto um pouco menor */
   color: black;
-  font-family: 'Times New Roman', Times, serif; 
   font-weight: bold;
-
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* deixa o card com leve profundidade */
 }
 
 
 
+/* Container das estrelas */
+.stars {
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+}
 
+/* Estrela normal (apagada) */
+.star {
+  font-size: 22px;
+  color: #ccc; /* cinza clara */
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+/* Estrela ativa (amarela) */
+.starAtiva {
+  color: #d1b200; /* dourado */
+  transform: scale(1.1);
+}
+
+/* Animação de hover (opcional, melhora UX) */
+.star:hover {
+  color: #d8ad00;
+  transform: scale(1.2);
+}
+
+
+.concluidoVerde {
+  background-color: #d4edda;      /* verde bem claro */
+  color: #155724;                 /* verde escuro pro texto */
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.pendenteVermelho {
+  background-color: #f8d7da;      /* vermelho claro */
+  color: #721c24;                 /* vermelho escuro */
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.containerr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.icon {
+  width: 32px;         /* tamanho pequeno */
+  height: 32px;
+  flex-shrink: 0;       /* impede o ícone de esticar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* mantém proporção da imagem */
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}

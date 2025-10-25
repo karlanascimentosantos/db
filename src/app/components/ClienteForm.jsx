@@ -10,13 +10,13 @@ export default function ClienteForm({ onAddAgendamento }) {
   const [hora, setHora] = useState('')
   const [horarios, setHorarios] = useState([])
 
-  useEffect(() => { fetchServicos() }, [])
-
   const fetchServicos = async () => {
     const res = await fetch('/api/servicos')
     const data = await res.json()
     setServico(Array.isArray(data) ? data : [])
   }
+
+  useEffect(() => { fetchServicos() }, [])
 
   const fetchHorarios = async (dataSelecionada) => {
     setData(dataSelecionada)

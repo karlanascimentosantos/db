@@ -6,6 +6,7 @@ export const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [usuarioLogado, setUsuarioLogado] = useState(null)
+  const [needsRefresh, setNeedsRefresh] = useState(false) // 👈 adicionamos isso
 
   useEffect(() => {
     const usuario = localStorage.getItem('usuario')
@@ -21,7 +22,14 @@ export function AuthProvider({ children }) {
   }, [usuarioLogado])
 
   return (
-    <AuthContext.Provider value={{ usuarioLogado, setUsuarioLogado }}>
+    <AuthContext.Provider
+      value={{
+        usuarioLogado,
+        setUsuarioLogado,
+        needsRefresh,        // 👈 exporta para o resto do app
+        setNeedsRefresh,     // 👈 exporta a função para atualizar
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
