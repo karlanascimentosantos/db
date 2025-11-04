@@ -3,17 +3,13 @@
 import { useState, useEffect } from 'react'
 import ClienteList from '@/app/components/ClienteList'
 import style from './page.module.css'
-import { useAuth } from '../context/AuthContext'
+import { useSession } from 'next-auth/react' 
+
 
 export default function Historico() {
   const [clientes, setClientes] = useState([])
-  const { usuarioLogado } = useAuth()
-
-  useEffect(() => {
-    if (usuarioLogado?.id) {
-      fetchClientes(usuarioLogado.id)
-    }
-  }, [usuarioLogado])
+  const { data: session, status} = useSession()
+  const usuarioLogado = session?.user
 
   const fetchClientes = async (id) => {
     try {
@@ -23,6 +19,21 @@ export default function Historico() {
     } catch (err) {
       console.error("Erro ao buscar histórico:", err)
     }
+  }
+
+
+  useEffect(() => {
+    if (usuarioLogado?.id) {
+      fetchClientes(usuarioLogado.id)
+    }
+  }, [usuarioLogado])
+
+  if (status === 'loading') {
+    return <p>Carregando...</p>
+  }
+
+  if (!usuarioLogado) {
+    return <p>Você não está logado</p>
   }
 
   return (

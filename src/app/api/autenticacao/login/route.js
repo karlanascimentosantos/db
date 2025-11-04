@@ -1,36 +1,44 @@
 
 import { NextResponse } from 'next/server'
 import pool from "@/lib/db";
+import bcrypt from "bcryptjs";
 
 export async function POST(request) {
   try {
-    const { nome, senha } = await request.json( )
+    const { email, senha } = await request.json()
 
     const client = await pool.connect()
     try {
-    const result = await client.query(
-      'SELECT * FROM consumidor WHERE nome = $1 AND senha = $2',
-      [nome, senha]
-    )
-
-    const user = result.rows[0]
-
-    if(!user) { 
-      return NextResponse.json(
-        {error: "Usuário ou senha inválido. Tente novamente"},
-        {status: 401}
+      const result = await client.query(
+        'SELECT * FROM consumidor WHERE email = $1',
+        [email]
       )
-    }
-    
-    return NextResponse.json(
-      { id: user.id, nome: user.nome },
-      { status: 200 }
-    )
 
-  } finally {
-    client.release()
-  }
-  
+      const user = result.rows[0]
+
+      if (!user) {
+        return NextResponse.json(
+          { error: "Usuário ou senha inválido. Tente novamente" },
+          { status: 401 }
+        )
+      }
+
+      const senhaValida = await bcrypt.compare(senha, user.senha_hash);
+      if (!senhaValida) {
+        return NextResponse.json(
+          { error: "Usuário ou senha inválido. Tente novamente" },
+          { status: 401 }
+        )
+      }
+
+      return NextResponse.json(
+        { id: user.id, email: user.email },
+        { status: 200 }
+      )
+
+    } finally {
+      client.release()
+    }
 
   } catch (error) {
     console.error('Erro ao logar consumidor:', error)

@@ -1,17 +1,22 @@
 'use client'
 import { useState } from 'react'
 import ClienteForm from '../components/ClienteForm'
-import { useAuth } from '../context/AuthContext'
+import { useSession } from 'next-auth/react'
 import style from './page.module.css'
 import Swal from 'sweetalert2'
 
 
 export default function Page() {
-  const { usuarioLogado } = useAuth()
+  const { data: session, status } = useSession()
   
 
   const handleAddAgendamento = async ({ id_servico, datahora }) => {
-    if (!usuarioLogado) {
+    if (status === 'loading') {
+      alert('Carregando informações do usuário')
+      return
+    }
+
+    if (!session?.user) {
       alert('Usuário não logado')
       return
     }
@@ -21,7 +26,7 @@ export default function Page() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          consumidor_id: usuarioLogado.id,
+          consumidor_id: session.user.id,
           id_servico,
           datahora
         }),

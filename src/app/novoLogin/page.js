@@ -1,37 +1,40 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '../context/AuthContext'
+import { signIn, useSession } from "next-auth/react";
 import style from "./page.module.css"
 
 export default function ClienteLogin() {
-  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const route = useRouter()
-  const { setUsuarioLogado } = useAuth()
+
+  const { data: session } = useSession();
+
+    if (!session?.user) {
+    return <p>Redirecionando para login...</p>; 
+  }
+
 
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch('/api/autenticacao/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, senha })
-      })
+       const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        senha
+      });
 
-      if (res.ok) {
-        const data = await res.json()
-        setUsuarioLogado(data)
-        route.push('/perfil')
-      } else {
-        const err = await res.json()
-        alert(err.error)
+      if (res?.ok) {
+      route.push("/perfil");
+      } else { 
+        alert("Credenciais inválidas");
       }
     } catch (error) {
       console.error(error)
       alert('Erro de conexão')
     }
-  }
+  };
   
   return (
     <div>
@@ -46,14 +49,14 @@ export default function ClienteLogin() {
     <div className={style.box}>
       <h2 className={style.titulo}>Login</h2>
 
-      <label className={style.name} htmlFor="nome">Nome:</label>
+      <label className={style.name} htmlFor="email">Email:</label>
       <input
         className={style.nome}
-        type="text"
-        id="nome"
-        name="nome"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
+        type="email"
+        id="email"
+        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         required
       />
 

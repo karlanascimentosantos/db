@@ -1,7 +1,9 @@
 
+'use client'
+
 import { useState, useEffect } from 'react';
 import style from './styles.module.css';
-import { useAuth } from "../context/AuthContext";
+
 
 export default function ClienteList({ clientes, onDeleteConsumidor }) {
   const [list, setList] = useState(clientes || []);
