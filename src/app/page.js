@@ -3,8 +3,6 @@
 import style from './page.module.css';
 import { useState } from 'react';
 
-
-
 export default function Menu(){
   return(
  <div>

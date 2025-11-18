@@ -9,13 +9,7 @@ export default function ClienteLogin() {
   const [senha, setSenha] = useState('')
   const route = useRouter()
 
-  const { data: session } = useSession();
-
-    if (!session?.user) {
-    return <p>Redirecionando para login...</p>; 
-  }
-
-
+ 
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
@@ -34,6 +28,13 @@ export default function ClienteLogin() {
       console.error(error)
       alert('Erro de conexão')
     }
+
+     const { data: session } = useSession();
+
+    if (!session?.user) {
+    return <p>Redirecionando para login...</p>; 
+  }
+
   };
   
   return (

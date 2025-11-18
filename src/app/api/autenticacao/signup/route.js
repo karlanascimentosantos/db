@@ -11,12 +11,12 @@ export async function POST(request) {
     const saltRounds = 10;
     const senhaHash = await bcrypt.hash(senha, saltRounds);
 
-    const client = await pool.connect();
+    const client = await pool.connect();                                                                                                                                                                                                                                                                                                     
 
     await client.query(
       'INSERT INTO consumidor (nome, email, senha_hash) VALUES ($1, $2, $3)',
       [nome, email, senhaHash]
-    );
+    )
 
     client.release();
 
@@ -27,7 +27,6 @@ export async function POST(request) {
 }
 
 }
-
 
 
 export async function GET() {
