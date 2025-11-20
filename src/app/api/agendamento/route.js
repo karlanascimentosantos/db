@@ -3,25 +3,50 @@ import { NextResponse } from 'next/server'
 import pool from "@/lib/db";
 
 export async function GET(request) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const consumidorId = searchParams.get('consumidorId')
+  const { searchParams } = new URL(request.url)
 
-    const client = await pool.connect()
+  const admin = searchParams.get("admin") === "true"
+  const clienteId = searchParams.get("clienteId")
+
+  const client = await pool.connect()
+
+  if (admin) {
+    const hoje = new Date()
+    hoje.setHours(0, 0, 0, 0)
+
+    const amanha = new Date(hoje)
+    amanha.setDate(hoje.getDate() + 1)
+
     const result = await client.query(
-      `SELECT a.agendamentoid, a.datahora, a.consumidor_id, a.id_servico, a.concluido, a.avaliacao, s.nome  AS servico
+      `SELECT a.agendamentoid, a.datahora, s.nome AS servico, u.nome AS cliente
+       FROM agendamento a
+       JOIN servico s ON a.id_servico = s.id
+       JOIN usuario u ON u.id = a.consumidor_id
+       WHERE a.datahora >= $1 AND a.datahora < $2
+       ORDER BY a.datahora ASC`,
+      [hoje, amanha]
+    )
+
+    client.release()
+    return NextResponse.json(result.rows)
+  }
+
+  if (clienteId) {
+    const result = await client.query(
+      `SELECT a.agendamentoid, a.datahora, s.nome AS servico
        FROM agendamento a
        JOIN servico s ON a.id_servico = s.id
        WHERE a.consumidor_id = $1
        ORDER BY a.datahora ASC`,
-   [consumidorId]
+      [clienteId]
     )
+
     client.release()
     return NextResponse.json(result.rows)
-  } catch (error) {
-    console.error('Erro listando clients:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
+
+  client.release()
+  return NextResponse.json([])
 }
 
 export async function POST(request) {
