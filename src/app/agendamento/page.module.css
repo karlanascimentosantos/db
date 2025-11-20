@@ -16,12 +16,7 @@
     font-family:  'Times New Roman', Times, serif;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  scroll-behavior: smooth;
-  height: 100%; 
-}
+
 
 
 .fontText {
