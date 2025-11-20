@@ -49,3 +49,8 @@ barra{
   right: 0;
   height: 45px;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
