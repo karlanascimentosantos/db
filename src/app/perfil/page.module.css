@@ -1,13 +1,15 @@
 
 
-html, body {
-  margin: 0;
+:global(html),
+:global(body) {
+ margin: 0;
   padding: 0;
   background: #171313; 
   font-family: 'Times New Roman', Times, serif;
   color: #E8DCC0;
   margin-top: 40px;
 }
+
 
 
 .nome {

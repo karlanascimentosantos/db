@@ -74,7 +74,7 @@ export default function Page() {
       <h1 className={style.h1}>Agendamento</h1>
       <ClienteForm onAddAgendamento={handleAddAgendamento} />
 
-                    <div className={style.barra}></div>
+       <div className={style.barra}></div>
 
     </div>
   )

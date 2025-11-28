@@ -3,32 +3,26 @@ import { NextResponse } from 'next/server'
 import pool from "@/lib/db";
 
 export async function GET(request) {
-  const { searchParams } = new URL(request.url)
+  const { searchParams } = new URL(request.url);
 
-  const admin = searchParams.get("admin") === "true"
-const consumidorId = searchParams.get("consumidorId")
+  const admin = searchParams.get("admin") === "true";
+  const consumidorId = searchParams.get("consumidorId");
 
-  const client = await pool.connect()
+  const client = await pool.connect();
 
   if (admin) {
-    const hoje = new Date()
-    hoje.setHours(0, 0, 0, 0)
-
-    const amanha = new Date(hoje)
-    amanha.setDate(hoje.getDate() + 1)
-
+    // Usa CURRENT_DATE direto no banco — sem problemas de fuso horário
     const result = await client.query(
       `SELECT a.agendamentoid, a.datahora, s.nome AS servico, u.nome AS cliente
        FROM agendamento a
        JOIN servico s ON a.id_servico = s.id
        JOIN usuario u ON u.id = a.consumidor_id
-       WHERE a.datahora >= $1 AND a.datahora < $2
-       ORDER BY a.datahora ASC`,
-      [hoje, amanha]
-    )
+       WHERE DATE(a.datahora) = CURRENT_DATE
+       ORDER BY a.datahora ASC`
+    );
 
-    client.release()
-    return NextResponse.json(result.rows)
+    client.release();
+    return NextResponse.json(result.rows);
   }
 
   if (consumidorId) {
@@ -39,15 +33,16 @@ const consumidorId = searchParams.get("consumidorId")
        WHERE a.consumidor_id = $1
        ORDER BY a.datahora ASC`,
       [consumidorId]
-    )
+    );
 
-    client.release()
-    return NextResponse.json(result.rows)
+    client.release();
+    return NextResponse.json(result.rows);
   }
 
-  client.release()
-  return NextResponse.json([])
+  client.release();
+  return NextResponse.json([]);
 }
+
 
 export async function POST(request) {
   let client
