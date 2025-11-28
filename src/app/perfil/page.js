@@ -36,7 +36,6 @@ export default function Perfil() {
     })();
   }, [usuarioLogado]);
 
-  // Função para deletar agendamento
   async function handleDelete(id) {
     if (!id) return alert('ID inválido');
 
@@ -90,59 +89,62 @@ export default function Perfil() {
       <p>Você não está logado</p>
     ) : (
       <div className={style.perfil}>
+
         <h1 className={style.nome}>
-          <CircleUserRound size={35} color="#caaa00"/> {usuarioLogado.nome}
+          BEM VINDO, {usuarioLogado.nome?.toUpperCase()}
         </h1>
 
-        <a href="agendamento" className={style.buttonAgendar}>Agendar Horário</a>
-        <a href="historico" className={style.buttonHistorico}>Ver Histórico</a>
+        <div className={style.alinhar}>
+          <div className={style.quadro}>
 
-        <p className={style.duvida}>Dúvidas? fale comigo no whatsapp</p>
-        <a className={style.whats} href="https://wa.me/558394182171?">
-          <MessageCircleQuestionMark size={30} color="green" /> Clique aqui!
-        </a>
-
-        <div className={style.quadroA}>
-          <MapPin size={18} color="black"/>
-          <h2 className={style.avisos}>Estamos abertos até o meio dia</h2>
-        </div>
-
-        <div className={style.quadroB}></div>
-        <div className={style.quadroC}></div>
-
-        <div className={style.quadro}>
-          <img src="bigode.png" className={style.img} />
-
-          <div className={style.proximoServico}>
-            <h1 className={style.h11}>Seu próximo serviço:</h1>
+            <h2 className={style.tituloCard}>Próximo serviço:</h2>
 
             {proximo ? (
-              <div className={style.detalhes}>
-                <h2 className={style.servico}>{proximo.servico}</h2>
-                <p className={style.datahora}>
-                  <Calendar size={18} color="#b59b35" />
+              <>
+                <h1 className={style.servico}>{proximo.servico}</h1>
+
+                <p className={style.data}>
                   {new Date(proximo.datahora).toLocaleDateString("pt-BR", {
                     day: "2-digit",
                     month: "2-digit",
                   })}{" "}
-                  às{" "}
+                  -{" "}
+                  {new Intl.DateTimeFormat("pt-BR", { weekday: "long" })
+                    .format(new Date(proximo.datahora))
+                    .replace(/^\w/, c => c.toUpperCase())}
+                </p>
+
+                <p className={style.hora}>
                   {new Date(proximo.datahora).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </p>
 
-                <button className={style.cancelar} onClick={() => handleDelete(proximo?.agendamentoid)}>
-                  <Trash2 size={17} color="#000000ff" />
-                  <span> Cancelar</span>
+                <button
+                 className={style.buttonCancelar}
+                 onClick={() => handleDelete(proximo.agendamentoid)}
+                 >
+                Cancelar Agendamento
                 </button>
-              </div>
+
+              </>
             ) : (
               <p className={style.naoTem}>Você não possui serviços agendados.</p>
             )}
           </div>
         </div>
+
+        <div className={style.alinharBotoes}>
+          <a href="agendamento" className={style.button}>Agendar</a>
+          <a href="historico" className={style.button}>Histórico</a>
+        </div>
+
+              <div className={style.barra}></div>
+
+
       </div>
     )}
   </div>
-) }
+);
+}

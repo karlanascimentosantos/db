@@ -1,24 +1,23 @@
 'use client'
+
 import { useState } from 'react'
 import ClienteForm from '../components/ClienteForm'
 import { useSession } from 'next-auth/react'
 import style from './page.module.css'
 import Swal from 'sweetalert2'
 
-
 export default function Page() {
   const { data: session, status } = useSession()
-  
 
   const handleAddAgendamento = async ({ id_servico, datahora }) => {
     if (status === 'loading') {
       alert('Carregando informações do usuário')
-      return
+      return false
     }
 
     if (!session?.user) {
       alert('Usuário não logado')
-      return
+      return false
     }
 
     try {
@@ -35,7 +34,7 @@ export default function Page() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Erro ao salvar agendamento')
 
-      const confirmAgendamento = await Swal.fire ({
+      const confirmAgendamento = await Swal.fire({
         title: "Agendado",
         text: `Agendamento realizado com sucesso para o dia: ${datahora}`,
         confirmButtonText: "OK",
@@ -44,26 +43,29 @@ export default function Page() {
         color: "black",
         iconColor: "rgba(79, 100, 6, 1)",
         confirmButtonColor: "black",
-         
-        
-      });
-     if (!confirmAgendamento.isConfirmed) return;
-  
+      })
+
+      // 🔥 AGORA SIM — SE CLICOU OK → RETORNA TRUE
+      if (confirmAgendamento.isConfirmed) {
+        return true
+      }
+
+      return false
+
     } catch (err) {
       console.error(err)
-      
-     Swal.fire ({
-       title: 'erro',
-       text: "Não foi possível realizar agendamento",
-       confirmButtonColor: "OK",
-       background: "#b59b35",
+
+      Swal.fire({
+        title: 'Erro',
+        text: "Não foi possível realizar agendamento",
+        background: "#b59b35",
         color: "black",
         iconColor: "rgba(79, 100, 6, 1)",
         confirmButtonColor: "black",
-      icon: "error"
-       
+        icon: "error"
+      })
 
-     })
+      return false
     }
   }
 
@@ -71,7 +73,9 @@ export default function Page() {
     <div>
       <h1 className={style.h1}>Agendamento</h1>
       <ClienteForm onAddAgendamento={handleAddAgendamento} />
-      
+
+                    <div className={style.barra}></div>
+
     </div>
   )
 }

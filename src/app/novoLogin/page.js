@@ -1,15 +1,20 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react"
 import style from "./page.module.css"
 
 export default function ClienteLogin() {
-  const { data: session } = useSession(); // ✔️ AQUI É PERMITIDO
-
+  const { data: session } = useSession()
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
-  const route = useRouter()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (session?.user) {
+      router.push("/perfil")
+    }
+  }, [session, router])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -22,24 +27,19 @@ export default function ClienteLogin() {
       });
 
       if (res?.ok) {
-        route.push("/perfil");
+        router.push("/perfil")
       } else {
-        alert("Credenciais inválidas");
+        alert("Credenciais inválidas")
       }
     } catch (error) {
       console.error(error)
       alert('Erro de conexão')
     }
-  };
-
-  // ✔️ Se já estiver logado, redireciona
-  if (session?.user) {
-    route.push("/perfil");
-    return <p>Redirecionando...</p>
   }
 
   return (
     <div>
+      <img src="logo3.png" className={style.logo3}  />
       <h2 className={style.h2}>Bem-vindo!</h2>
       <p  className={style.texto}> Faça login  para acessar a página </p>
       <p className={style.text}> Ainda não tem uma conta? <br></br>

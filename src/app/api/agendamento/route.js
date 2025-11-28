@@ -6,7 +6,7 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url)
 
   const admin = searchParams.get("admin") === "true"
-  const clienteId = searchParams.get("clienteId")
+const consumidorId = searchParams.get("consumidorId")
 
   const client = await pool.connect()
 
@@ -31,14 +31,14 @@ export async function GET(request) {
     return NextResponse.json(result.rows)
   }
 
-  if (clienteId) {
+  if (consumidorId) {
     const result = await client.query(
-      `SELECT a.agendamentoid, a.datahora, s.nome AS servico
+      `SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao, s.nome AS servico
        FROM agendamento a
        JOIN servico s ON a.id_servico = s.id
        WHERE a.consumidor_id = $1
        ORDER BY a.datahora ASC`,
-      [clienteId]
+      [consumidorId]
     )
 
     client.release()

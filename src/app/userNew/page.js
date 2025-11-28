@@ -36,7 +36,8 @@ export default function Home() {
     };
 
     return (
-        < div >
+        <div>
+            <img src="logo3.png" className={style.logo3}/>
          <div>
             <h2 className={style.h22}>Bem-Vindo!</h2>
             <p className={style.texto1}>Comece sua experiência com estilo.</p> <br>

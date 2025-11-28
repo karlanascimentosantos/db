@@ -99,14 +99,14 @@
   position: relative;
   z-index: 10;      
   font-family: 'Times New Roman', Times, serif; 
-  top: 320px;
+  top: 150px;
   left: 400px;
 }
 
 .texto {
   font-family: 'Times New Roman', Times, serif;
   position: relative;
-  top: 360px;
+  top: 180px;
   left: 380px;
   font-size: 30px;
 }
@@ -114,7 +114,7 @@
 .text {
   font-family: 'Times New Roman', Times, serif;
   position: relative;
-  top: 380px;
+  top: 200px;
   left: 380px;
   font-size: 30px;
 }
@@ -123,7 +123,7 @@
   font-family: 'Times New Roman', Times, serif;
   font-size: 40px;
   position: relative;
-  top: 440px;
+  top: 280px;
   left: 320px;
   display: inline-block; 
   background-color: white;
@@ -147,4 +147,22 @@
   left: 320px;
   right: 840px;
   height: 5px;
+}
+
+.logo3 {
+  position: relative;  
+  left: 25%;
+  top: 100px
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

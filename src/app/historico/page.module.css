@@ -1,8 +1,8 @@
 .h1 {
     color: #e9ca4f;
     position: relative;
-    margin-left: 100px;
-    margin-top: 100px;
+    margin-left: 30px;
+    margin-top: 120px;
     font-family: 'Times New Roman', Times, serif;
     
 }
@@ -17,3 +17,14 @@
   z-index: 1000;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

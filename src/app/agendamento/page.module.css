@@ -1,8 +1,7 @@
 .h1{
     color: #ffde59;
-    position: relative;
-    top: 130px;
-    left: 150px;
+    margin-top: 5%;
+    margin-left: 10%;
     font-size: 60px;
     font-family: 'Times New Roman', Times, serif;
 
@@ -23,3 +22,12 @@
   font-family: 'Times New Roman', Times, serif;
 }
 
+.barra {
+  background-color: #e9ca4f;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45px;
+  z-index: 1000;
+}

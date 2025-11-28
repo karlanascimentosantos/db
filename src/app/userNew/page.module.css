@@ -40,14 +40,14 @@
   position: relative;
   z-index: 10;      
   font-family: 'Times New Roman', Times, serif; 
-  top: 320px;
+  top: 130px;
   left: 400px;
 }
 
 .texto1 {
   font-family: 'Times New Roman', Times, serif;
   position: relative;
-  top: 360px;
+  top: 250px;
   left: 380px;
   font-size: 30px;
 }
@@ -55,7 +55,7 @@
 .texto2 {
   font-family: 'Times New Roman', Times, serif;
   position: relative;
-  top: 370px;
+  top: 270px;
   left: 380px;
   font-size: 30px;
 }
@@ -67,4 +67,10 @@
   left: 320px;
   right: 840px;
   height: 5px;
+}
+
+.logo3 {
+  position: relative;
+  top: 95px;
+  left: 25%;
 }
