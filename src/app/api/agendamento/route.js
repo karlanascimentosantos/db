@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import pool from "@/lib/db";
 
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
 
@@ -10,66 +11,85 @@ export async function GET(request) {
 
   const client = await pool.connect();
 
-  if (admin) {
-    // Usa CURRENT_DATE direto no banco — sem problemas de fuso horário
-    const result = await client.query(
-      `SELECT a.agendamentoid, a.datahora, s.nome AS servico, u.nome AS cliente
-       FROM agendamento a
-       JOIN servico s ON a.id_servico = s.id
-       JOIN usuario u ON u.id = a.consumidor_id
-       WHERE DATE(a.datahora) = CURRENT_DATE
-       ORDER BY a.datahora ASC`
-    );
+  try {
+    let result;
 
-    client.release();
+    if (admin) {
+     result = await client.query(
+  `SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao, s.nome AS servico, c.nome AS consumidor
+   FROM agendamento a
+   JOIN servico s ON a.id_servico = s.id
+   JOIN consumidor c ON c.id = a.consumidor_id::int
+   WHERE DATE(a.datahora) = CURRENT_DATE
+   ORDER BY a.datahora ASC`
+);
+
+    } else if (consumidorId) {
+      const consumidorIdNum = parseInt(consumidorId, 10);
+
+      if (isNaN(consumidorIdNum)) {
+        return NextResponse.json({ error: "consumidorId inválido" }, { status: 400 });
+      }
+
+      result = await client.query(
+        `SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao, s.nome AS servico
+         FROM agendamento a
+         JOIN servico s ON a.id_servico = s.id
+         WHERE a.consumidor_id = $1
+         ORDER BY a.datahora ASC`,
+        [consumidorIdNum]
+      );
+    } else {
+      result = { rows: [] };
+    }
+
     return NextResponse.json(result.rows);
-  }
-
-  if (consumidorId) {
-    const result = await client.query(
-      `SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao, s.nome AS servico
-       FROM agendamento a
-       JOIN servico s ON a.id_servico = s.id
-       WHERE a.consumidor_id = $1
-       ORDER BY a.datahora ASC`,
-      [consumidorId]
-    );
-
+  } catch (err) {
+    console.error("Erro ao buscar agendamentos:", err);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+  } finally {
     client.release();
-    return NextResponse.json(result.rows);
   }
-
-  client.release();
-  return NextResponse.json([]);
 }
 
 
 export async function POST(request) {
-  let client
+  let client;
   try {
-    const { consumidor_id, id_servico, datahora } = await request.json()
+    const { consumidor_id, id_servico, datahora } = await request.json();
 
     if (!consumidor_id || !id_servico || !datahora) {
       return NextResponse.json(
         { error: "consumidor_id, id_servico e datahora são obrigatórios" },
         { status: 400 }
-      )
+      );
     }
 
-    client = await pool.connect()
+    // Converter para horário local do Brasil (GMT-3)
+    const data = new Date(datahora);
+    const dataLocal = new Date(data.getTime() - 3 * 60 * 60 * 1000); // subtrai 3h
+    const dataHoraString = dataLocal.toISOString().slice(0, 19).replace("T", " ");
+
+    client = await pool.connect();
     await client.query(
       `INSERT INTO agendamento (consumidor_id, id_servico, datahora)
        VALUES ($1, $2, $3)`,
-      [consumidor_id, id_servico, datahora]
-    )
-    return NextResponse.json({ message: "Agendamento criado com sucesso" }, { status: 201 })
+      [consumidor_id, id_servico, dataHoraString]
+    );
+
+    return NextResponse.json(
+      { message: "Agendamento criado com sucesso" },
+      { status: 201 }
+    );
   } catch (err) {
-    console.error("Erro ao criar agendamento:", err)
-    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
+    console.error("Erro ao criar agendamento:", err);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   } finally {
-    if (client) client.release()
+    if (client) client.release();
   }
 }
+
+
 
 export async function DELETE(request) {
   try {
