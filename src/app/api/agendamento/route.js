@@ -15,14 +15,37 @@ export async function GET(request) {
     let result;
 
     if (admin) {
-     result = await client.query(
-  `SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao, s.nome AS servico, c.nome AS consumidor
-   FROM agendamento a
-   JOIN servico s ON a.id_servico = s.id
-   JOIN consumidor c ON c.id = a.consumidor_id::int
-   WHERE DATE(a.datahora) = CURRENT_DATE
-   ORDER BY a.datahora ASC`
-);
+      const data = searchParams.get("data");
+
+      let query;
+      let params = [];
+
+      if (data) {
+        // usa a data enviada pelo mobile/web
+        query = `
+          SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao,
+                 s.nome AS servico, c.nome AS consumidor
+          FROM agendamento a
+          JOIN servico s ON a.id_servico = s.id
+          JOIN consumidor c ON c.id = a.consumidor_id::int
+          WHERE DATE(a.datahora) = $1::date
+          ORDER BY a.datahora ASC
+        `;
+        params = [data];
+      } else {
+        // fallback caso não venha "data"
+        query = `
+          SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao,
+                 s.nome AS servico, c.nome AS consumidor
+          FROM agendamento a
+          JOIN servico s ON a.id_servico = s.id
+          JOIN consumidor c ON c.id = a.consumidor_id::int
+          WHERE DATE(a.datahora) = CURRENT_DATE
+          ORDER BY a.datahora ASC
+        `;
+      }
+
+      result = await client.query(query, params);
 
     } else if (consumidorId) {
       const consumidorIdNum = parseInt(consumidorId, 10);
@@ -44,6 +67,7 @@ export async function GET(request) {
     }
 
     return NextResponse.json(result.rows);
+
   } catch (err) {
     console.error("Erro ao buscar agendamentos:", err);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
@@ -51,6 +75,7 @@ export async function GET(request) {
     client.release();
   }
 }
+
 
 
 export async function POST(request) {
@@ -65,7 +90,6 @@ export async function POST(request) {
       );
     }
 
-    // Converter para horário local do Brasil (GMT-3)
     const data = new Date(datahora);
     const dataLocal = new Date(data.getTime() - 3 * 60 * 60 * 1000); // subtrai 3h
     const dataHoraString = dataLocal.toISOString().slice(0, 19).replace("T", " ");

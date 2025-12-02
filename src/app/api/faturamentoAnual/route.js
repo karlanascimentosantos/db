@@ -6,24 +6,23 @@ export async function GET(request) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const data = searchParams.get("data"); 
+    const ano = searchParams.get("ano") || new Date().getFullYear();
 
     const result = await client.query(
       `SELECT COALESCE(SUM(s.preco), 0) AS faturamento
        FROM agendamento a
        JOIN servico s ON a.id_servico = s.id
-       WHERE DATE(a.datahora) = $1`,
-      [data || new Date().toISOString().slice(0, 10)]
+       WHERE EXTRACT(YEAR FROM a.datahora) = $1`,
+      [ano]
     );
 
-    const faturamento = parseInt(result.rows[0].faturamento, 10);
+    const faturamento = parseFloat(result.rows[0].faturamento);
 
     return NextResponse.json({ faturamento });
   } catch (err) {
-    console.error("Erro ao buscar faturamento:", err);
+    console.error("Erro ao buscar faturamento anual:", err);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   } finally {
     client.release();
   }
 }
-
