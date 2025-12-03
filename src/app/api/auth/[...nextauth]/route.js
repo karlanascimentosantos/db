@@ -6,7 +6,10 @@ import pool from "@/lib/db";
 async function findUserByEmail(email) {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM consumidor WHERE email = $1", [email]);
+    const result = await client.query(
+      "SELECT * FROM consumidor WHERE email = $1",
+      [email]
+    );
     return result.rows[0] || null;
   } finally {
     client.release();
@@ -22,45 +25,50 @@ export const authOptions = {
         senha: { label: "Senha", type: "password" },
       },
       async authorize(credentials) {
-        try {
-          if (!credentials.email || !credentials.senha) return null;
+        if (!credentials.email || !credentials.senha) return null;
 
-          const user = await findUserByEmail(credentials.email);
-          if (!user) return null;
+        const user = await findUserByEmail(credentials.email);
+        if (!user) return null;
 
-          const senhaValida = await bcrypt.compare(credentials.senha, user.senha_hash);
-          if (!senhaValida) return null;
+        const senhaValida = await bcrypt.compare(
+          credentials.senha,
+          user.senha_hash
+        );
+        if (!senhaValida) return null;
 
-          return {
-            id: user.id,
-            nome: user.nome,
-            email: user.email,
-          };
-        } catch (err) {
-          console.error("Erro no authorize:", err);
-          return null;
-        }
+        // 🚀 Role ADICIONADO
+        return {
+          id: user.id,
+          nome: user.nome,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.nome = user.nome;
         token.email = user.email;
+        token.role = user.role; // 🚀 SALVA role no JWT
       }
       return token;
     },
+
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
         session.user.nome = token.nome;
         session.user.email = token.email;
+        session.user.role = token.role; // 🚀 ENVIA role para o frontend
       }
       return session;
     },
   },
+
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
 };

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-export async function GET() {
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const ano = searchParams.get("ano");
+
   const client = await pool.connect();
 
   try {
@@ -11,16 +14,13 @@ export async function GET() {
         COUNT(a.id_servico) AS quantidade
       FROM agendamento a
       JOIN servico s ON s.id = a.id_servico
+      WHERE EXTRACT(YEAR FROM a.datahora) = $1::int
       GROUP BY s.nome
       ORDER BY quantidade DESC
       LIMIT 1
-    `);
+    `, [ano]);
 
-    if (result.rows.length === 0) {
-      return NextResponse.json({ servico: null });
-    }
-
-    return NextResponse.json(result.rows[0]);
+    return NextResponse.json(result.rows[0] || { servico: null });
 
   } catch (err) {
     console.error(err);
@@ -29,3 +29,4 @@ export async function GET() {
     client.release();
   }
 }
+
