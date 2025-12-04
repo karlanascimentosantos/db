@@ -28,15 +28,13 @@ export async function POST(req) {
       return NextResponse.json({ error: "Senha incorreta." }, { status: 401 });
     }
 
-    // TOKEN PARA REACT NATIVE
+  
     const accessToken = `${user.id}-${Date.now()}`;
 
     return NextResponse.json({
       id: user.id,
       nome: user.nome,
       email: user.email,
-      telefone: user.telefone,
-      foto: user.foto,
       accessToken
     });
 
