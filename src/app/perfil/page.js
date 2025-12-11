@@ -2,93 +2,124 @@
 'use client'
 
 import { useSession } from "next-auth/react";
-import style from "./page.module.css"
-import { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
+import style from "./page.module.css";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { signOut } from "next-auth/react";
+
+
+// -------------------------------------------------------
+// Normalização correta dos agendamentos
+// -------------------------------------------------------
+function normalizeAgendamentos(lista) {
+  const agora = new Date();
+
+  return lista
+    .map(a => {
+      // Backend retorna: "2025-01-30 14:00:00"
+      // Transformamos em: "2025-01-30T14:00:00"
+      const dataObj = new Date(a.datahora.replace(" ", "T"));
+      return { ...a, dataObj };
+    })
+    .filter(a => a.dataObj >= agora && !a.concluido)
+    .sort((a, b) => a.dataObj - b.dataObj);
+}
 
 export default function Perfil() {
-  const { data: session, status } = useSession(); 
-  const [agendamentos, setAgendamentos] = useState([])
-  const [proximo, setProximo] = useState(null)
-  const usuarioLogado = session?.user; 
+  const { data: session, status } = useSession();
+  const [agendamentos, setAgendamentos] = useState([]);
+  const [proximo, setProximo] = useState(null);
 
+  const usuarioLogado = session?.user;
+
+  // -------------------------------------------------------
+  // Buscar agendamentos
+  // -------------------------------------------------------
   useEffect(() => {
     if (!usuarioLogado?.id) return;
 
     (async () => {
       try {
+        // ❗ CORRIGIDO: usar consumidorId
         const response = await fetch(`/api/agendamento?consumidorId=${usuarioLogado.id}`);
         const data = await response.json();
-if (!Array.isArray(data)) {
-  console.error("Backend não retornou array", data);
-  setAgendamentos([]);
-  setProximo(null);
-  return;
-}
 
-setAgendamentos(data);
+        if (!Array.isArray(data)) {
+          console.error("Backend não retornou array", data);
+          setAgendamentos([]);
+          setProximo(null);
+          return;
+        }
 
-const agora = new Date();
+        setAgendamentos(data);
 
-const futuros = data
-  .map(a => ({ ...a, dataObj: new Date(a.datahora.replace(' ', 'T')) }))
-  .filter(a => a.dataObj >= agora && !a.concluido)
-  .sort((a, b) => a.dataObj - b.dataObj);
-
-setProximo(futuros[0] || null);
+        // Extrair o mais próximo
+        const futuros = normalizeAgendamentos(data);
+        setProximo(futuros[0] || null);
 
       } catch (error) {
-        console.error("Erro ao buscar agendamento", error);
+        console.error("Erro ao buscar agendamentos:", error);
       }
     })();
   }, [usuarioLogado]);
 
+  // -------------------------------------------------------
+  // Cancelar agendamento
+  // -------------------------------------------------------
   async function handleDelete(id) {
-    if (!id) return alert('ID inválido');
+    if (!id) return alert("ID inválido");
 
     const confirmDelete = await Swal.fire({
-      title: 'Cancelar',
-      text: 'Deseja realmente cancelar este agendamento?',
+      title: "Cancelar Agendamento",
+      text: "Deseja realmente cancelar este agendamento?",
       showCancelButton: true,
-      confirmButtonText: 'Sim',
-      cancelButtonText: 'Não',
-      icon: 'warning',
+      confirmButtonText: "Sim",
+      cancelButtonText: "Não",
+      icon: "warning",
     });
+
     if (!confirmDelete.isConfirmed) return;
 
     try {
-      const response = await fetch('/api/agendamento', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/agendamento", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        Swal.fire('Cancelado', data.message || 'Agendamento cancelado', 'success');
-
-        setAgendamentos(prev => {
-          const novos = prev.filter(a => a.agendamentoid !== id);
-          const agora = new Date();
-          const futuros = novos
-            .map(a => ({ ...a, dataObj: new Date(a.dataObj.replace(' ', 'T')) }))
-            .filter(a => a.dataObj >= agora && !a.concluido)
-            .sort((a, b) => a.dataObj - b.dataObj);
-          setProximo(futuros[0] || null);
-          return novos;
-        });
-      } else {
-        Swal.fire('Erro', data.error || "Erro ao cancelar serviço", 'error');
+      if (!response.ok) {
+        Swal.fire("Erro", data.error || "Erro ao cancelar agendamento", "error");
+        return;
       }
+
+      Swal.fire("Cancelado", data.message, "success");
+
+      // Atualizar lista local
+      setAgendamentos(prev => {
+        const novos = prev.filter(a => a.agendamentoid !== id);
+
+        const futuros = normalizeAgendamentos(novos);
+        setProximo(futuros[0] || null);
+
+        return novos;
+      });
+
     } catch (err) {
       console.error(err);
-      Swal.fire('Erro', "Erro ao cancelar serviço", 'error');
+      Swal.fire("Erro", "Erro ao cancelar serviço", "error");
     }
   }
 
+  // -------------------------------------------------------
+  // Loading
+  // -------------------------------------------------------
   if (status === "loading") return <p>Carregando...</p>;
 
+  // -------------------------------------------------------
+  // Renderização
+  // -------------------------------------------------------
   return (
     <div>
       {!usuarioLogado ? (
@@ -98,25 +129,36 @@ setProximo(futuros[0] || null);
           <h1 className={style.nome}>
             BEM VINDO, {usuarioLogado.nome?.toUpperCase()}
           </h1>
+          <button 
+            onClick={() => signOut({ callbackUrl: "/novoLogin" })} 
+            className={style.logout}
+                  >
+                   Sair
+                  </button>
+
 
           <div className={style.alinhar}>
             <div className={style.quadro}>
-              <h2 className={style.tituloCard}>Próximo serviço:</h2>
+              <h2 className={style.tituloCard}>Próximo Agendamento</h2>
 
               {proximo ? (
                 <>
                   <h1 className={style.servico}>{proximo.servico}</h1>
 
                   <p className={style.data}>
-                    {proximo.dataObj.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}{" "}
-                    -{" "}
-                    {new Intl.DateTimeFormat("pt-BR", { weekday: "long" })
+                    {proximo.dataObj.toLocaleDateString("pt-BR")} –{" "}
+                    {new Intl.DateTimeFormat("pt-BR", {
+                      weekday: "long",
+                    })
                       .format(proximo.dataObj)
                       .replace(/^\w/, c => c.toUpperCase())}
                   </p>
 
                   <p className={style.hora}>
-                    {proximo.dataObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    {proximo.dataObj.toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
 
                   <button
@@ -127,14 +169,14 @@ setProximo(futuros[0] || null);
                   </button>
                 </>
               ) : (
-                <p className={style.naoTem}>Você não possui serviços agendados.</p>
+                <p className={style.naoTem}>Você não tem agendamentos futuros.</p>
               )}
             </div>
           </div>
 
           <div className={style.alinharBotoes}>
-            <a href="agendamento" className={style.button}>Agendar</a>
-            <a href="historico" className={style.button}>Histórico</a>
+            <a href="/agendamento" className={style.button}>Agendar</a>
+            <a href="/historico" className={style.button}>Histórico</a>
           </div>
 
           <div className={style.barra}></div>

@@ -1,27 +1,39 @@
-.nome{
-  border: 2px solid #b9b5b5;
-  background-color: #b9b5b5;
+.nomee, 
+.password {
+  border: 2px solid #8a8989 !important;
   border-radius: 20px;
   color: black;
-  padding: 2px 5px;
+  padding: 10px 15px;
   font-size: 20px;
+  width: 100%;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+  transition: 0.2s ease;
+  margin-bottom: 18px;
+    background-color: #fffafa;
 
+}
+
+.nomee:focus,
+.password:focus {
+  outline: none;
+  background-color: #fffafa;
+  border-color: #8a8989;
 }
 
 .senha{ 
   color: black;
   font-family: 'Times New Roman', Times, serif;
   margin-top: 20px;
-  font-size: 25px;
-  
+  font-size: 22px;
+  margin-bottom: 5px;
 }
 
 .name{
   color:black;
   font-family: 'Times New Roman', Times, serif;
-  font-size: 25px;
+  font-size: 22px;
+  margin-bottom: 5px;
 }
-
 
 .titulo {
   font-family: 'Times New Roman', Times, serif;
@@ -30,33 +42,23 @@
   font-size: 30px;
 }
 
-.password {
-  border: 2px solid #b9b5b5;
-  background-color: #b9b5b5;
-  border-radius: 20px;
-  color: black;
-  padding: 2px 35px;
-  font-size: 20px;
-}
-
 .box {
-       width: 400px;      
-       height: 500px;     
-       border: 2px solid rgb(0, 0, 0);      
-       margin: 50px;       
-       background-color: #f2efeb;
-       position: absolute;
-       left: 1150px;
-       border-radius: 40px;
-       box-shadow: 18px 18px  #e9ca4f;
-       top: 150px;
+  width: 400px;      
+  height: 500px;     
+  border: 2px solid rgb(0, 0, 0);      
+  margin: 50px;       
+  background-color: #f2efeb;
+  position: absolute;
+  left: 1150px;
+  border-radius: 40px;
+  box-shadow: 18px 18px  #e9ca4f;
+  top: 150px;
 
-       display: flex;
-       flex-direction: column;   
-       justify-content: flex-start; 
-       padding: 30px;  
+  display: flex;
+  flex-direction: column;   
+  justify-content: flex-start; 
+  padding: 30px;
 }  
-
 
 .barra {
   background-color: #e9ca4f;
@@ -69,14 +71,16 @@
 
 .entrar {
   background-color: #808080;
-  border-color: 2px solid #808080;
-  border-radius: 10px;
-  color: rgb(0, 0, 0); 
+  border: 2px solid #808080;
+  border-radius: 12px;
+  color: black;
   font-family: 'Times New Roman', Times, serif;
-  padding: 7px;
+  padding: 10px;
   font-size: 20px;
   font-weight: bold;
   cursor: pointer;
+  width: 100%;
+  transition: 0.2s ease;
 }
 
 .entrar:hover {
@@ -91,8 +95,7 @@
   cursor: pointer;
 }
 
-
- .h2 {
+.h2 {
   font-size: 60px;
   color: rgb(255, 255, 255);
   margin: 20px;
@@ -136,6 +139,7 @@
   font-size: 20px;
   font-weight: bold;
 }
+
 .outrapagina:hover {
   background-color: #e9ca4f; 
 }
@@ -155,7 +159,26 @@
   top: 100px
 }
 
+.googleButton {
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
 
+.googleButton:hover {
+  background-color: #e9ca4f;
+}
 
 :global(body) {
   min-height: 100vh;
@@ -168,4 +191,9 @@
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+
+.merda {
+  background-color: #f2efeb;
 }

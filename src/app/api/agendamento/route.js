@@ -30,7 +30,7 @@ export async function GET(request) {
           JOIN consumidor c ON c.id = a.consumidor_id::int
           WHERE DATE(a.datahora) = $1::date
           ORDER BY a.datahora ASC
-        `;
+        `;    
         params = [data];
       } else {
         // fallback caso não venha "data"

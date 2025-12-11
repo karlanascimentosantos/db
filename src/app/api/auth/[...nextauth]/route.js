@@ -1,8 +1,12 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
 
+// ----------------------------------------------------
+// Buscar usuário por email
+// ----------------------------------------------------
 async function findUserByEmail(email) {
   const client = await pool.connect();
   try {
@@ -16,8 +20,41 @@ async function findUserByEmail(email) {
   }
 }
 
+// ----------------------------------------------------
+// Criar usuário Google se não existir
+// ----------------------------------------------------
+async function createGoogleUser({ nome, email }) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `INSERT INTO consumidor (nome, email, senha_hash, role)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [nome, email, null, "cliente"]
+    );
+
+    return result.rows[0];
+  } finally {
+    client.release();
+  }
+}
+
+// ----------------------------------------------------
+// NextAuth Config
+// ----------------------------------------------------
 export const authOptions = {
   providers: [
+    // ------------------------------
+    // LOGIN POR GOOGLE
+    // ------------------------------
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+
+    // ------------------------------
+    // LOGIN POR EMAIL + SENHA
+    // ------------------------------
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -36,7 +73,6 @@ export const authOptions = {
         );
         if (!senhaValida) return null;
 
-        // 🚀 Role ADICIONADO
         return {
           id: user.id,
           nome: user.nome,
@@ -48,12 +84,35 @@ export const authOptions = {
   ],
 
   callbacks: {
+    async signIn({ user, account }) {
+      // Se login é pelo Google:
+      if (account.provider === "google") {
+        // Verificar se já existe no banco
+        let dbUser = await findUserByEmail(user.email);
+
+        if (!dbUser) {
+          // Criar automaticamente
+          dbUser = await createGoogleUser({
+            nome: user.name,
+            email: user.email,
+          });
+        }
+
+        // Substituir user retornado pelo usuário do banco
+        user.id = dbUser.id;
+        user.nome = dbUser.nome;
+        user.role = dbUser.role;
+      }
+
+      return true;
+    },
+
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.nome = user.nome;
         token.email = user.email;
-        token.role = user.role; // 🚀 SALVA role no JWT
+        token.role = user.role;
       }
       return token;
     },
@@ -63,7 +122,7 @@ export const authOptions = {
         session.user.id = token.id;
         session.user.nome = token.nome;
         session.user.email = token.email;
-        session.user.role = token.role; // 🚀 ENVIA role para o frontend
+        session.user.role = token.role;
       }
       return session;
     },
@@ -74,5 +133,5 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
+

@@ -17,43 +17,55 @@ export default function AutenticarForm({ onAddConsumidor}) {
     return (
       <form onSubmit={handleSubmit}>
 
-        <label className={style.name} htmlFor="nome"> Nome:</label>
-        <br></br>
-            <input className={style.logar}
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-            />
-     
-       <br></br>
-        <label className={style.email} htmlFor="email">Email:</label>
-        <br></br>
-            <input className={style.campoemail}
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-        <br></br>
-        <label className={style.senha} htmlFor="senha">Senha:</label>
-        <br></br>
-            <input className={style.camposenha}
-              type='password'
-              
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
+  <label className={style.name} htmlFor="nome"> Nome:</label>
+  <br />
 
-            <br></br>
+  <div className={style.merda}>
+
+  <input className={style.nome}
+    type="text"
+    value={nome}
+    onChange={(e) => setNome(e.target.value)}
+    required
+  />
+
+  </div>
+
+  <br />
+  <label className={style.text} htmlFor="email">Email:</label>
+  <br />
+    <div className={style.merda}>
+
+  <input className={style.email}
+    type="email"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    required
+  />
+    </div>
+
+
+  <br />
+  <label className={style.senha} htmlFor="senha">Senha:</label>
+  <br />
+  
+  <input className={style.password}
+    type="password"
+    value={senha}
+    onChange={(e) => setSenha(e.target.value)}
+    required
+  />
+
+   <br></br>
             <a href="novoLogin"> </a>
             <button className={style.button} type='submit'>
                        Cadastrar
 
             </button>
 
-      </form>
+</form>
+
     )
 
 }
+

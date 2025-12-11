@@ -24,7 +24,7 @@ export default function ClienteLogin() {
         redirect: false,
         email,
         senha
-      });
+      })
 
       if (res?.ok) {
         router.push("/perfil")
@@ -39,11 +39,16 @@ export default function ClienteLogin() {
 
   return (
     <div>
-      <img src="logo3.png" className={style.logo3}  />
+
+      {console.log(style)}
+      
+      <img src="logo3.png" className={style.logo3} />
       <h2 className={style.h2}>Bem-vindo!</h2>
-      <p  className={style.texto}> Faça login  para acessar a página </p>
-      <p className={style.text}> Ainda não tem uma conta? <br></br>
-        Cadastre-se e aproveite o melhor da barbearia!</p>
+      <p className={style.texto}>Faça login para acessar a página</p>
+      <p className={style.text}>
+        Ainda não tem uma conta? <br />
+        Cadastre-se e aproveite o melhor da barbearia!
+      </p>
 
       <a href="userNew" className={style.outrapagina}>Cadastrar</a>
 
@@ -51,16 +56,21 @@ export default function ClienteLogin() {
         <div className={style.box}>
           <h2 className={style.titulo}>Login</h2>
 
+          
           <label className={style.name} htmlFor="email">Email:</label>
-          <input
-            className={style.nome}
+
+          <div className={style.merda}>
+          <input 
+            
+            className={style.nomee}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+    
           />
-
           <label className={style.senha} htmlFor="senha">Senha:</label>
+         
           <input
             className={style.password}
             type="password"
@@ -68,10 +78,30 @@ export default function ClienteLogin() {
             onChange={(e) => setSenha(e.target.value)}
             required
           />
+          </div>
+
+        
 
           <h4 className={style.remember}>Esqueceu a senha?</h4>
 
-          <button className={style.entrar} type="submit">Entrar</button>
+
+          <button
+            type="button"
+            className={style.googleButton}
+            onClick={() => signIn("google")}
+          >
+            <img
+              src="/google.png"
+              alt="Google"
+              style={{ width: "20px", marginRight: "8px" }}
+            />
+            Entrar com Google
+          </button>
+          
+          <button className={style.entrar} type="submit">
+            Entrar
+          </button>
+
           <div className={style.barra}></div>
           <div className={style.barra2}></div>
         </div>
