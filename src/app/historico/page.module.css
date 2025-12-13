@@ -17,15 +17,3 @@
   z-index: 1000;
 }
 
-:global(html),
-:global(body) {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-:global(body) {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}

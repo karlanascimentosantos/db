@@ -63,3 +63,44 @@ html, body {
   color: #E8DCC0;
   margin-top: 40px;
 }
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  min-height: 100vh;
+  font-family: 'Times New Roman', Times, serif;
+  background: #1a1a1a;
+  
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+
+
+html,
+body {
+ margin: 0;
+  padding: 0;
+  background: #171313; 
+  font-family: 'Times New Roman', Times, serif;
+  margin-top: 40px;
+}
+

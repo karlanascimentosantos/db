@@ -180,18 +180,6 @@
   background-color: #e9ca4f;
 }
 
-:global(body) {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-:global(html),
-:global(body) {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
 
 
 .merda {
