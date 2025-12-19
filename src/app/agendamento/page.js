@@ -45,7 +45,6 @@ export default function Page() {
         confirmButtonColor: "black",
       })
 
-      // 🔥 AGORA SIM — SE CLICOU OK → RETORNA TRUE
       if (confirmAgendamento.isConfirmed) {
         return true
       }

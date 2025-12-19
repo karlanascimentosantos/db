@@ -8,16 +8,13 @@ import Swal from "sweetalert2";
 import { signOut } from "next-auth/react";
 
 
-// -------------------------------------------------------
-// Normalização correta dos agendamentos
-// -------------------------------------------------------
+
 function normalizeAgendamentos(lista) {
   const agora = new Date();
 
   return lista
     .map(a => {
-      // Backend retorna: "2025-01-30 14:00:00"
-      // Transformamos em: "2025-01-30T14:00:00"
+     
       const dataObj = new Date(a.datahora.replace(" ", "T"));
       return { ...a, dataObj };
     })
@@ -32,15 +29,12 @@ export default function Perfil() {
 
   const usuarioLogado = session?.user;
 
-  // -------------------------------------------------------
-  // Buscar agendamentos
-  // -------------------------------------------------------
+  
   useEffect(() => {
     if (!usuarioLogado?.id) return;
 
     (async () => {
       try {
-        // ❗ CORRIGIDO: usar consumidorId
         const response = await fetch(`/api/agendamento?consumidorId=${usuarioLogado.id}`);
         const data = await response.json();
 
@@ -53,7 +47,6 @@ export default function Perfil() {
 
         setAgendamentos(data);
 
-        // Extrair o mais próximo
         const futuros = normalizeAgendamentos(data);
         setProximo(futuros[0] || null);
 
@@ -63,9 +56,7 @@ export default function Perfil() {
     })();
   }, [usuarioLogado]);
 
-  // -------------------------------------------------------
-  // Cancelar agendamento
-  // -------------------------------------------------------
+  
   async function handleDelete(id) {
     if (!id) return alert("ID inválido");
 
@@ -96,7 +87,6 @@ export default function Perfil() {
 
       Swal.fire("Cancelado", data.message, "success");
 
-      // Atualizar lista local
       setAgendamentos(prev => {
         const novos = prev.filter(a => a.agendamentoid !== id);
 
@@ -112,14 +102,10 @@ export default function Perfil() {
     }
   }
 
-  // -------------------------------------------------------
-  // Loading
-  // -------------------------------------------------------
+ 
   if (status === "loading") return <p>Carregando...</p>;
 
-  // -------------------------------------------------------
-  // Renderização
-  // -------------------------------------------------------
+ 
   return (
     <div>
       {!usuarioLogado ? (

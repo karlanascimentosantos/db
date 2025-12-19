@@ -17,24 +17,18 @@ export default function AutenticarForm({ onAddConsumidor}) {
     return (
       <form onSubmit={handleSubmit}>
 
-  <label className={style.name} htmlFor="nome"> Nome:</label>
-  <br />
+      <label className={style.name} htmlFor="nome"> Nome:</label>
 
-  <div className={style.merda}>
+      <input className={style.nome}
+       type="text"
+       value={nome}
+       onChange={(e) => setNome(e.target.value)}
+       required
+      />
 
-  <input className={style.nome}
-    type="text"
-    value={nome}
-    onChange={(e) => setNome(e.target.value)}
-    required
-  />
 
-  </div>
 
-  <br />
   <label className={style.text} htmlFor="email">Email:</label>
-  <br />
-    <div className={style.merda}>
 
   <input className={style.email}
     type="email"
@@ -42,12 +36,11 @@ export default function AutenticarForm({ onAddConsumidor}) {
     onChange={(e) => setEmail(e.target.value)}
     required
   />
-    </div>
+   
 
 
-  <br />
   <label className={style.senha} htmlFor="senha">Senha:</label>
-  <br />
+  
   
   <input className={style.password}
     type="password"
@@ -56,7 +49,6 @@ export default function AutenticarForm({ onAddConsumidor}) {
     required
   />
 
-   <br></br>
             <a href="novoLogin"> </a>
             <button className={style.button} type='submit'>
                        Cadastrar

@@ -4,9 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
 
-// ----------------------------------------------------
-// Buscar usuário por email
-// ----------------------------------------------------
+
 async function findUserByEmail(email) {
   const client = await pool.connect();
   try {
@@ -20,9 +18,7 @@ async function findUserByEmail(email) {
   }
 }
 
-// ----------------------------------------------------
-// Criar usuário Google se não existir
-// ----------------------------------------------------
+
 async function createGoogleUser({ nome, email }) {
   const client = await pool.connect();
   try {
@@ -39,22 +35,16 @@ async function createGoogleUser({ nome, email }) {
   }
 }
 
-// ----------------------------------------------------
-// NextAuth Config
-// ----------------------------------------------------
+
 export const authOptions = {
   providers: [
-    // ------------------------------
-    // LOGIN POR GOOGLE
-    // ------------------------------
+  
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
 
-    // ------------------------------
-    // LOGIN POR EMAIL + SENHA
-    // ------------------------------
+    
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -85,20 +75,16 @@ export const authOptions = {
 
   callbacks: {
     async signIn({ user, account }) {
-      // Se login é pelo Google:
       if (account.provider === "google") {
-        // Verificar se já existe no banco
         let dbUser = await findUserByEmail(user.email);
 
         if (!dbUser) {
-          // Criar automaticamente
           dbUser = await createGoogleUser({
             nome: user.name,
             email: user.email,
           });
         }
 
-        // Substituir user retornado pelo usuário do banco
         user.id = dbUser.id;
         user.nome = dbUser.nome;
         user.role = dbUser.role;

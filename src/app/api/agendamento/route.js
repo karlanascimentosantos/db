@@ -21,7 +21,6 @@ export async function GET(request) {
       let params = [];
 
       if (data) {
-        // usa a data enviada pelo mobile/web
         query = `
           SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao,
                  s.nome AS servico, c.nome AS consumidor
@@ -33,7 +32,6 @@ export async function GET(request) {
         `;    
         params = [data];
       } else {
-        // fallback caso não venha "data"
         query = `
           SELECT a.agendamentoid, a.datahora, a.concluido, a.avaliacao,
                  s.nome AS servico, c.nome AS consumidor

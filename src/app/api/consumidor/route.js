@@ -44,15 +44,6 @@ export async function GET() {
       client.release();
     }
   } 
-  
-  
-  
-  
-  
-  
-  
-  
-  
   catch (err) {
     console.error("Erro interno:", err);
     return NextResponse.json(
